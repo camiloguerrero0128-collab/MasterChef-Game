@@ -99,9 +99,16 @@ sabor:['Mango','Piña','Miel','Mermelada de fresa','Banano','Manzana verde','Uva
 crujiente:['Maní','Nachos','Cebolla frita','Galletas saladas','Zanahoria rallada','Palomitas','Almendras','Papas de paquete','Granola','Maíz tostado'],
 sorpresa:['Aguacate','Chocolate negro','Salsa picante','Queso azul','Canela','Coco rallado','Maíz dulce','Mostaza','Nutella','Jengibre','Salsa de soya','Menta'],
 vegetal:['Espinaca','Pimentón','Cebolla morada','Tomate cherry','Pepino','Lechuga','Brócoli','Zanahoria','Cilantro','Rúcula']};
+const ING_BY={'Sándwich':{
+principal:['Pollo desmechado','Jamón serrano','Atún','Roast beef','Pavo ahumado','Queso brie','Queso halloumi','Huevo frito','Carne desmechada','Chorizo','Milanesa de pollo','Mortadela','Hongos portobello salteados','Berenjena asada','Camarones','Queso mozzarella fresco'],
+sabor:['Mermelada de cebolla','Mermelada de fresa','Pepinillos','Piña asada','Mostaza Dijon','Miel con mostaza','Manzana verde en láminas','Chutney de mango','Tomates secos','Aceitunas negras','Alcaparras','Salsa BBQ','Bocadillo de guayaba','Cebolla encurtida','Jalapeños en vinagre','Pera en láminas'],
+crujiente:['Tocino crocante','Papas de paquete','Cebolla frita','Nachos triturados','Maní molido','Crutones','Chicharrón','Zanahoria rallada','Apio picado','Almendras laminadas','Chips de plátano','Patacón triturado','Pretzels triturados'],
+sorpresa:['Aguacate','Nutella','Queso azul','Wasabi','Huevo de codorniz','Mantequilla de maní','Arequipe','Pesto','Hummus','Sriracha','Kimchi','Plátano maduro frito','Mayonesa de ajo','Chocolate negro','Chimichurri'],
+vegetal:['Lechuga','Tomate','Rúcula','Espinaca','Pepino','Cebolla morada','Pimentón asado','Repollo morado','Cilantro','Albahaca','Germinados','Calabacín a la plancha','Cebolla caramelizada']}};
+const ings=(c,d)=>((d&&ING_BY[d[1]])||ING)[c];
 const CATN={principal:'Principal',sabor:'Dulce o ácido',crujiente:'Crujiente',sorpresa:'Sorpresa',vegetal:'Fresco'};
 const LV={facil:{n:'Fácil',cats:['principal','sabor','crujiente','sorpresa'],min:25},medio:{n:'Medio',cats:['principal','sabor','crujiente','sorpresa','vegetal'],min:20},chef:{n:'Chef',cats:['principal','sabor','crujiente','sorpresa','vegetal','sorpresa'],min:15}};
-const BAN=['Ajo','Cebolla','Queso','Huevo','Limón','Picante','Azúcar','Salsa de tomate','Pan','Aceite de oliva'];
+const BAN=['Ajo','Cebolla','Queso','Huevo','Limón','Picante','Azúcar','Salsa de tomate','Mayonesa','Tocino'];
 let S={screen:'home',n:2,names:['Jugador 1','Jugador 2'],rounds:3,level:'medio',same:true,ban:true,extras:3,dishOn:DISHES.map(()=>true),cats:{principal:true,sabor:true,crujiente:true,sorpresa:true,vegetal:true}};
 const catsList=()=>{const l=Object.keys(CATN).filter(c=>S.cats[c]);if(S.level==='chef'&&S.cats.sorpresa)l.push('sorpresa');return l};
 const activeDishes=()=>DISHES.filter((d,i)=>S.dishOn[i]);
@@ -142,14 +149,16 @@ ${rules()}
 <button class="go" onclick="startGame()">Empezar la partida</button>`}
 
 function startGame(){S.score=S.names.map(()=>0);S.last=S.names.map(()=>0);S.jokers=S.names.map(()=>false);S.round=0;newRound()}
-function drawBox(){const used=new Set();return catsList().map(c=>{let x;do{x=pick(ING[c])}while(used.has(x));used.add(x);return{c,x}})}
-function newRound(){S.round++;const base=drawBox();
-R={dish:pick(activeDishes()),ban:S.ban?pick(BAN):null,boxes:S.names.map(()=>S.same?base.map(o=>({...o})):drawBox()),phase:'prep',revealed:false,tab:0,total:LV[S.level].min*60,left:LV[S.level].min*60,running:false,late:false,half:false,five:false};
+function drawBox(d){const used=new Set();return catsList().map(c=>{let x;do{x=pick(ings(c,d))}while(used.has(x));used.add(x);return{c,x}})}
+function mkBoxes(d){const b=drawBox(d);return S.names.map(()=>S.same?b.map(o=>({...o})):drawBox(d))}
+function mkBan(bx){if(!S.ban)return null;const all=bx.flat().map(o=>o.x.toLowerCase());const ok=BAN.filter(b=>!all.some(i=>i.includes(b.toLowerCase())));return pick(ok.length?ok:BAN)}
+function newRound(){S.round++;const dish=pick(activeDishes());const bx=mkBoxes(dish);
+R={dish,ban:mkBan(bx),boxes:bx,phase:'prep',revealed:false,tab:0,total:LV[S.level].min*60,left:LV[S.level].min*60,running:false,late:false,half:false,five:false};
 S.screen='round';render()}
-function reroll(){const a=activeDishes();if(a.length<2)return;let d;do{d=pick(a)}while(d===R.dish);R.dish=d;render()}
+function reroll(){const a=activeDishes();if(a.length<2)return;let d;do{d=pick(a)}while(d===R.dish);R.dish=d;R.boxes=mkBoxes(d);R.ban=mkBan(R.boxes);render()}
 function tab(i){R.tab=i;render()}
 function reveal(){R.revealed=true;document.querySelectorAll('.ing').forEach(e=>e.classList.add('on'));const b=$('#rv');if(b){b.textContent='¡A cocinar!';b.onclick=cook}}
-function joker(p,k){if(S.jokers[p])return;const cur=R.boxes[p];const c=cur[k].c;const taken=cur.map(o=>o.x);let x;do{x=pick(ING[c])}while(taken.includes(x));cur[k].x=x;S.jokers[p]=true;render()}
+function joker(p,k){if(S.jokers[p])return;const cur=R.boxes[p];const c=cur[k].c;const taken=cur.map(o=>o.x);let x;do{x=pick(ings(c,R.dish))}while(taken.includes(x));cur[k].x=x;S.jokers[p]=true;render()}
 function beep(n=1){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);o.frequency.value=880;g.gain.value=.15;const t=actx.currentTime+i*.3;o.start(t);o.stop(t+.18)}}catch(e){}}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function say(t){const a=$('#alert');if(!a)return;a.textContent=t;a.style.display='block';clearTimeout(say.t);say.t=setTimeout(()=>{a.style.display='none'},7000)}
