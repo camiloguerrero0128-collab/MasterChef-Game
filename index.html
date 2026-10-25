@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MasterChef en casa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfaf7;--ink:#141414;--card:#fff;--line:#e4e1d9;--muted:#6b6962;--gold:#d9a41b;--goldink:#1a1400;--red:#c8102e;--green:#2f7d4f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--ink:#f4f2ec;--card:#1f1f1d;--line:#363430;--muted:#aaa79e;--red:#ef5a6f;--green:#5fbf86}}
+:root[data-theme="dark"]{--bg:#151514;--ink:#f4f2ec;--card:#1f1f1d;--line:#363430;--muted:#aaa79e;--red:#ef5a6f;--green:#5fbf86}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif}
+#app{max-width:620px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,.big{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif;letter-spacing:-.01em}
+h1{font-size:2.3rem;line-height:1.05;margin:8px 0 6px;font-weight:800}
+h2{font-size:1.15rem;margin:0 0 10px;font-weight:800}
+.lead{color:var(--muted);margin:0 0 20px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 14px;min-height:44px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.go{width:100%;background:var(--gold);color:var(--goldink);border-color:var(--gold);font-weight:700;font-size:1.05rem;margin-top:6px}
+.ghost{background:transparent}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper b{font:800 1.8rem "Bricolage Grotesque",sans-serif;min-width:2ch;text-align:center}
+.stepper button{width:44px;font-size:1.3rem;padding:0}
+.seg{display:flex;gap:8px}.seg button{flex:1}
+.seg .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tgs{display:flex;flex-wrap:wrap;gap:8px}
+body{border-top:6px solid var(--gold)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px;gap:10px}
+.back{padding:8px 14px;min-height:40px;font-weight:600}
+.logo{display:flex;align-items:center;gap:8px;color:var(--ink)}
+.logo svg{width:38px;height:33px}
+.logo .wm{font:800 1.25rem "Bricolage Grotesque",Figtree,sans-serif;letter-spacing:-.02em}
+.logo .en{background:var(--red);color:#fff;border-radius:6px;padding:1px 8px;font-weight:700;font-size:.8rem}
+.hero{text-align:center;padding:34px 0 18px}
+.hero .logo{flex-direction:column;gap:8px;justify-content:center}
+.hero .logo svg{width:104px;height:91px}
+.hero .wm{font-size:2.9rem;line-height:1}
+.hero .en{font-size:1.05rem;padding:2px 14px}
+.hero .lead{margin:18px 0 16px}
+.leave{border:2px solid var(--red)}
+.tg{border-radius:99px;padding:8px 14px}
+.tg.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+input[type=text]{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);margin-bottom:8px}
+label.chk{display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+label.chk input{width:20px;height:20px;margin-top:2px;accent-color:var(--green)}
+details{margin:0 0 14px}summary{cursor:pointer;font-weight:700;padding:8px 0}
+details ul{margin:6px 0 0;padding-left:20px}details li{margin:4px 0}
+.dish{display:flex;gap:14px;align-items:center}
+.dish .em{font-size:3.2rem;line-height:1}
+.dish .big{font-size:1.9rem;font-weight:800;line-height:1.1}
+.muted{color:var(--muted);font-size:.92rem}
+.chip{display:inline-block;border-radius:99px;padding:4px 12px;font-weight:700;font-size:.9rem;margin:8px 8px 0 0;border:1px solid var(--line)}
+.chip.ban{color:var(--red);border-color:var(--red)}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
+.tabs button{white-space:nowrap}.tabs .on{background:var(--gold);color:var(--goldink);border-color:var(--gold);font-weight:700}
+.ings{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ing{border:2px solid var(--ink);border-radius:12px;padding:10px 12px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.ing .cat{font-size:.85rem;color:var(--muted)}
+.ing b{font:800 1.2rem/1.15 "Bricolage Grotesque",sans-serif;transition:text-shadow .5s var(--d),color .5s var(--d)}
+.ing:not(.on) b{color:transparent;text-shadow:0 0 14px var(--ink)}
+.ing .mini{min-height:34px;padding:4px 10px;font-size:.85rem}
+.clock{text-align:center;padding:22px 10px}
+.clock .t{font:800 5rem/1 "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.clock.warn .t{color:var(--red)}
+.bar{height:10px;border-radius:99px;background:var(--line);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);transition:width .4s linear}
+.clock.warn .bar i{background:var(--red)}
+#alert{display:none;background:var(--gold);color:var(--goldink);font-weight:700;border-radius:12px;padding:12px 14px;margin-bottom:12px;text-align:center}
+.sc{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0}
+.sc label{font-size:.85rem;color:var(--muted);display:block}
+select{width:100%;font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.rank{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.rank:first-of-type{border-top:0}
+.rank .pos{font:800 1.5rem "Bricolage Grotesque",sans-serif;width:2ch}
+.rank .nm{flex:1;font-weight:600}
+.rank .pt{font:800 1.5rem "Bricolage Grotesque",sans-serif}
+.rank .d{color:var(--green);font-size:.9rem;min-width:4ch;text-align:right}
+.win{text-align:center;padding:10px 0 4px}.win .big{font-size:2.4rem;font-weight:800}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+@media (prefers-reduced-motion:reduce){.ing b,.bar i{transition:none}}
+</style></head>
+<body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DISHES=[['🥪','Sándwich'],['🍝','Pasta'],['🌮','Tacos'],['🥗','Ensalada'],['🍰','Postre'],['🍳','Omelette o huevos'],['🍔','Hamburguesa'],['🥣','Sopa o crema'],['🌯','Wrap o arepa rellena'],['🍕','Pizza casera']];
+const ING={
+principal:['Pollo desmechado','Atún','Jamón','Queso mozzarella','Champiñones','Salchicha','Carne molida','Tofu','Camarones','Huevos','Tocino','Queso fresco'],
+sabor:['Mango','Piña','Miel','Mermelada de fresa','Banano','Manzana verde','Uvas','Arequipe','Limón','Pepinillos','Aceitunas','Yogur natural','Vinagre balsámico'],
+crujiente:['Maní','Nachos','Cebolla frita','Galletas saladas','Zanahoria rallada','Palomitas','Almendras','Papas de paquete','Granola','Maíz tostado'],
+sorpresa:['Aguacate','Chocolate negro','Salsa picante','Queso azul','Canela','Coco rallado','Maíz dulce','Mostaza','Nutella','Jengibre','Salsa de soya','Menta'],
+vegetal:['Espinaca','Pimentón','Cebolla morada','Tomate cherry','Pepino','Lechuga','Brócoli','Zanahoria','Cilantro','Rúcula']};
+const CATN={principal:'Principal',sabor:'Dulce o ácido',crujiente:'Crujiente',sorpresa:'Sorpresa',vegetal:'Fresco'};
+const LV={facil:{n:'Fácil',cats:['principal','sabor','crujiente','sorpresa'],min:25},medio:{n:'Medio',cats:['principal','sabor','crujiente','sorpresa','vegetal'],min:20},chef:{n:'Chef',cats:['principal','sabor','crujiente','sorpresa','vegetal','sorpresa'],min:15}};
+const BAN=['Ajo','Cebolla','Queso','Huevo','Limón','Picante','Azúcar','Salsa de tomate','Pan','Aceite de oliva'];
+let S={screen:'home',n:2,names:['Jugador 1','Jugador 2'],rounds:3,level:'medio',same:true,ban:true,extras:3,dishOn:DISHES.map(()=>true),cats:{principal:true,sabor:true,crujiente:true,sorpresa:true,vegetal:true}};
+const catsList=()=>{const l=Object.keys(CATN).filter(c=>S.cats[c]);if(S.level==='chef'&&S.cats.sorpresa)l.push('sorpresa');return l};
+const activeDishes=()=>DISHES.filter((d,i)=>S.dishOn[i]);
+function togCat(c){const on=Object.keys(S.cats).filter(k=>S.cats[k]);if(S.cats[c]&&on.length<=1)return;S.cats[c]=!S.cats[c];render()}
+function togDish(i){const n=S.dishOn.filter(Boolean).length;if(S.dishOn[i]&&n<=1)return;S.dishOn[i]=!S.dishOn[i];render()}
+let R=null,tid=null,actx=null;
+
+function fixNames(){while(S.names.length<S.n)S.names.push('Jugador '+(S.names.length+1));S.names.length=S.n}
+function chg(k,d,lo,hi){S[k]=Math.min(hi,Math.max(lo,S[k]+d));fixNames();render()}
+function setLv(l){S.level=l;S.cats={principal:true,sabor:true,crujiente:true,sorpresa:true,vegetal:LV[l].cats.includes('vegetal')};render()}
+function setSame(v){S.same=v;render()}
+function nm(i,v){S.names[i]=v}
+function rules(){const L=LV[S.level];return `<details><summary>Reglas del juego</summary><ul>
+<li>Cada ronda se sortea un plato y una caja misteriosa de ${catsList().length} ingredientes.</li>
+<li>Hay que usar todos los ingredientes de la caja.</li>
+<li>Despensa libre: sal, pimienta, aceite, mantequilla y pan o base.</li>
+<li>Se permiten hasta ${S.extras} extras de la nevera.</li>
+<li>Cada jugador tiene un comodín por partida para cambiar un ingrediente por otro de su misma categoría.</li>
+${S.ban?'<li>Cada ronda hay un ingrediente prohibido que nadie puede usar.</li>':''}
+<li>Tiempo: ${L.min} minutos, con aviso a la mitad y en los últimos 5 minutos.</li>
+<li>Puntaje: los demás califican de 1 a 10 el sabor, la presentación y la creatividad. Máximo 30 por ronda.</li>
+<li>Si el plato no está terminado cuando acaba el tiempo, se restan 5 puntos.</li>
+<li>Gana quien sume más puntos al final de las rondas.</li></ul></details>`}
+
+function vSetup(){const L=LV[S.level];return `
+<h1>Configura la partida</h1><p class="lead">Jugadores, rondas y reglas de la cocina.</p>
+<section><h2>Jugadores</h2><div class="stepper"><button aria-label="Quitar jugador" onclick="chg('n',-1,2,8)">−</button><b>${S.n}</b><button aria-label="Agregar jugador" onclick="chg('n',1,2,8)">+</button></div>
+<div style="margin-top:12px">${S.names.map((n,i)=>`<input type="text" aria-label="Nombre del jugador ${i+1}" value="${esc(n)}" oninput="nm(${i},this.value)">`).join('')}</div></section>
+<section><h2>Rondas</h2><div class="stepper"><button aria-label="Menos rondas" onclick="chg('rounds',-1,1,8)">−</button><b>${S.rounds}</b><button aria-label="Más rondas" onclick="chg('rounds',1,1,8)">+</button></div></section>
+<section><h2>Dificultad</h2><div class="seg">${Object.keys(LV).map(k=>`<button class="${S.level==k?'on':''}" onclick="setLv('${k}')">${LV[k].n}</button>`).join('')}</div>
+<p class="muted" style="margin:10px 0 0">${catsList().length} ingredientes y ${L.min} minutos por ronda. La dificultad sugiere las categorías, pero puedes cambiarlas abajo.</p></section>
+<section><h2>Categorías de la caja misteriosa</h2><p class="muted" style="margin:0 0 10px">Se sortea un ingrediente por cada categoría activa${S.level==='chef'?' (en nivel Chef, un segundo ingrediente sorpresa)':''}.</p><div class="tgs">${Object.keys(CATN).map(c=>`<button class="tg ${S.cats[c]?'on':''}" aria-pressed="${!!S.cats[c]}" onclick="togCat('${c}')">${CATN[c]}</button>`).join('')}</div></section>
+<section><h2>Platos que pueden salir</h2><p class="muted" style="margin:0 0 10px">Toca para activar o quitar platos del sorteo.</p><div class="tgs">${DISHES.map((d,i)=>`<button class="tg ${S.dishOn[i]?'on':''}" aria-pressed="${!!S.dishOn[i]}" onclick="togDish(${i})">${d[0]} ${d[1]}</button>`).join('')}</div></section>
+<section><h2>Caja misteriosa</h2><div class="seg"><button class="${S.same?'on':''}" onclick="setSame(true)">La misma para todos</button><button class="${!S.same?'on':''}" onclick="setSame(false)">Una distinta para cada uno</button></div>
+<label class="chk"><input type="checkbox" ${S.ban?'checked':''} onchange="S.ban=this.checked;render()"> Ingrediente prohibido en cada ronda</label>
+<div class="row" style="margin-top:6px"><span>Extras permitidos</span><div class="stepper"><button aria-label="Menos extras" onclick="chg('extras',-1,0,6)">−</button><b>${S.extras}</b><button aria-label="Más extras" onclick="chg('extras',1,0,6)">+</button></div></div></section>
+${rules()}
+<button class="go" onclick="startGame()">Empezar la partida</button>`}
+
+function startGame(){S.score=S.names.map(()=>0);S.last=S.names.map(()=>0);S.jokers=S.names.map(()=>false);S.round=0;newRound()}
+function drawBox(){const used=new Set();return catsList().map(c=>{let x;do{x=pick(ING[c])}while(used.has(x));used.add(x);return{c,x}})}
+function newRound(){S.round++;const base=drawBox();
+R={dish:pick(activeDishes()),ban:S.ban?pick(BAN):null,boxes:S.names.map(()=>S.same?base.map(o=>({...o})):drawBox()),phase:'prep',revealed:false,tab:0,total:LV[S.level].min*60,left:LV[S.level].min*60,running:false,late:false,half:false,five:false};
+S.screen='round';render()}
+function reroll(){const a=activeDishes();if(a.length<2)return;let d;do{d=pick(a)}while(d===R.dish);R.dish=d;render()}
+function tab(i){R.tab=i;render()}
+function reveal(){R.revealed=true;document.querySelectorAll('.ing').forEach(e=>e.classList.add('on'));const b=$('#rv');if(b){b.textContent='¡A cocinar!';b.onclick=cook}}
+function joker(p,k){if(S.jokers[p])return;const cur=R.boxes[p];const c=cur[k].c;const taken=cur.map(o=>o.x);let x;do{x=pick(ING[c])}while(taken.includes(x));cur[k].x=x;S.jokers[p]=true;render()}
+function beep(n=1){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);o.frequency.value=880;g.gain.value=.15;const t=actx.currentTime+i*.3;o.start(t);o.stop(t+.18)}}catch(e){}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function say(t){const a=$('#alert');if(!a)return;a.textContent=t;a.style.display='block';clearTimeout(say.t);say.t=setTimeout(()=>{a.style.display='none'},7000)}
+function cook(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}R.phase='cook';R.endAt=Date.now()+R.left*1000;R.running=true;clearInterval(tid);tid=setInterval(tick,250);render();beep(1)}
+function tick(){if(!R.running)return;R.left=Math.max(0,Math.ceil((R.endAt-Date.now())/1000));paint();
+if(!R.half&&R.left<=R.total/2){R.half=true;beep(2);say('Van a la mitad del tiempo: '+fmt(R.left)+' restantes.')}
+if(!R.five&&R.total>=600&&R.left<=300){R.five=true;beep(3);say('¡Últimos 5 minutos! Empiecen a emplatar.')}
+if(R.left<=0){R.running=false;R.late=true;clearInterval(tid);beep(4);R.phase='score';render()}}
+function paint(){const t=$('#clk');if(!t)return;t.textContent=fmt(R.left);$('#bar').style.width=(100*R.left/R.total)+'%';$('#clock').classList.toggle('warn',R.left<=300)}
+function pause(){if(R.running){R.running=false;clearInterval(tid)}else{R.endAt=Date.now()+R.left*1000;R.running=true;tid=setInterval(tick,250)}render()}
+function done(){R.running=false;clearInterval(tid);R.phase='score';render()}
+
+function boxHtml(){const p=R.tab;const tabs=S.n>1?`<div class="tabs" role="tablist">${S.names.map((n,i)=>`<button role="tab" class="${i==p?'on':''}" onclick="tab(${i})">${esc(n)}</button>`).join('')}</div>`:'';
+const can=R.revealed&&R.phase!=='score'&&!S.jokers[p];
+return tabs+`<div class="ings">${R.boxes[p].map((o,k)=>`<div class="ing ${R.revealed?'on':''}" style="--d:${k*.35}s"><span class="cat">${CATN[o.c]}</span><b>${esc(o.x)}</b>${can?`<button class="mini ghost" onclick="joker(${p},${k})">Usar comodín</button>`:''}</div>`).join('')}</div>
+<p class="muted" style="margin:10px 0 0">Comodín de ${esc(S.names[p])}: ${S.jokers[p]?'ya usado':'disponible'}.</p>`}
+function head(){return `<div class="top"><b>Ronda ${S.round} de ${S.rounds}</b><span class="muted">${LV[S.level].n}</span></div>`}
+function dishHtml(){return `<section><div class="dish"><span class="em">${R.dish[0]}</span><div><div class="muted">El reto es</div><div class="big">${R.dish[1]}</div></div></div>
+${R.ban?`<span class="chip ban">Prohibido: ${esc(R.ban)}</span>`:''}<span class="chip">Extras: máx. ${S.extras}</span><span class="chip">Despensa libre</span></section>`}
+
+function vRound(){
+if(R.phase==='prep')return head()+dishHtml()+`<section><h2>Caja misteriosa</h2>${boxHtml()}</section>
+${activeDishes().length>1?'<div class="row"><button class="ghost" onclick="reroll()">Sortear otro plato</button></div>':''}
+<button id="rv" class="go" onclick="${R.revealed?'cook()':'reveal()'}">${R.revealed?'¡A cocinar!':'Abrir la caja misteriosa'}</button>`;
+if(R.phase==='cook')return head()+`<div id="alert" role="status"></div><section class="clock" id="clock"><div class="t" id="clk">${fmt(R.left)}</div><div class="bar"><i id="bar" style="width:${100*R.left/R.total}%"></i></div></section>
+${dishHtml()}<section><h2>Ingredientes</h2>${boxHtml()}</section>
+<div class="row"><button class="ghost" onclick="pause()">${R.running?'Pausar':'Seguir'}</button></div>
+<button class="go" onclick="done()">Terminamos</button>`;
+return head()+`<section><h2>Hora de probar</h2><p class="muted" style="margin:0">${R.late?'Se acabó el tiempo. Marquen quién alcanzó a terminar.':'Califiquen cada plato de 1 a 10. Los demás jugadores ponen la nota.'}</p></section>
+${S.names.map((n,i)=>`<section><h2>${esc(n)}</h2><div class="sc">${[['Sabor','a'],['Presentación','b'],['Creatividad','c']].map(([l,k])=>`<div><label for="s${i}${k}">${l}</label><select id="s${i}${k}">${[10,9,8,7,6,5,4,3,2,1].map(v=>`<option ${v==7?'selected':''}>${v}</option>`).join('')}</select></div>`).join('')}</div>
+<label class="chk"><input type="checkbox" id="ok${i}" ${R.late?'':'checked'}> Terminó a tiempo</label></section>`).join('')}
+<button class="go" onclick="saveScores()">Guardar puntajes</button>`}
+
+function saveScores(){S.names.forEach((n,i)=>{const v=k=>+$('#s'+i+k).value;let t=v('a')+v('b')+v('c');if(!$('#ok'+i).checked)t-=5;S.last[i]=t;S.score[i]+=t});
+S.screen=S.round>=S.rounds?'final':'board';render();window.scrollTo(0,0)}
+function ranking(){return S.names.map((n,i)=>({n,i,p:S.score[i],d:S.last[i]})).sort((a,b)=>b.p-a.p)}
+function rankHtml(){const r=ranking();let pos=0;return `<section>${r.map((x,k)=>{if(k==0||x.p!==r[k-1].p)pos=k+1;return `<div class="rank"><span class="pos">${pos}</span><span class="nm">${esc(x.n)}</span><span class="d">${x.d>=0?'+':''}${x.d}</span><span class="pt">${x.p}</span></div>`}).join('')}</section>`}
+function vBoard(){return `<div class="top"><b>Después de la ronda ${S.round}</b></div><h1>Marcador</h1><p class="lead">Quedan ${S.rounds-S.round} ${S.rounds-S.round==1?'ronda':'rondas'}.</p>${rankHtml()}<button class="go" onclick="newRound()">Siguiente ronda</button>`}
+function vFinal(){const r=ranking();const w=r.filter(x=>x.p===r[0].p).map(x=>esc(x.n));
+return `<div class="win"><div class="muted">${w.length>1?'Empate en el primer lugar':'El MasterChef de la casa es'}</div><div class="big">🏆 ${w.join(' y ')}</div></div>${rankHtml()}<button class="go" onclick="startGame()">Revancha con los mismos jugadores</button><button class="go ghost" style="background:transparent;color:var(--ink);border-color:var(--line)" onclick="S.screen='setup';render()">Cambiar ajustes</button>`}
+
+const HAT='<svg viewBox="0 0 64 56" aria-hidden="true"><g fill="currentColor"><circle cx="20" cy="21" r="12"/><circle cx="44" cy="21" r="12"/><circle cx="32" cy="14" r="13"/><rect x="14" y="24" width="36" height="20" rx="2"/></g><rect x="14" y="40" width="36" height="10" rx="2" fill="#d9a41b"/></svg>';
+const LOGO='<div class="logo" role="img" aria-label="MasterChef en casa">'+HAT+'<span class="wm">MasterChef</span><span class="en">en casa</span></div>';
+function vHome(){return `<div class="hero">${LOGO}<p class="lead">Un plato, una caja misteriosa y un reloj que no perdona.</p><button class="go" onclick="S.screen='setup';render()">Comenzar a jugar</button></div>${rules()}`}
+function nav(){if(S.screen==='home')return '';return `<div class="nav"><button class="back" onclick="back()">‹ Atrás</button>${LOGO}</div>`+(S.leave?`<section class="leave"><h2>¿Salir de la partida?</h2><p class="muted" style="margin:0 0 10px">Se pierde la ronda en curso y el marcador.</p><div class="row"><button class="go" style="margin:0;flex:1" onclick="leaveYes()">Salir</button><button style="flex:1" onclick="leaveNo()">Seguir jugando</button></div></section>`:'')}
+function back(){const s=S.screen;if(s==='setup'||s==='final'){S.screen='home';render();return}if(R&&R.running){R.running=false;clearInterval(tid);R.resume=true}S.leave=true;render()}
+function leaveYes(){S.leave=false;clearInterval(tid);if(R)R.running=false;S.screen='setup';render()}
+function leaveNo(){S.leave=false;if(R&&R.resume){R.resume=false;R.endAt=Date.now()+R.left*1000;R.running=true;tid=setInterval(tick,250)}render()}
+function render(){$('#app').innerHTML=nav()+({home:vHome,setup:vSetup,round:vRound,board:vBoard,final:vFinal})[S.screen]();if(S.screen==='round'&&R.phase==='cook')paint()}
+render();
+</script></body></html>
